@@ -1,0 +1,27 @@
+version: '3'
+services:
+  whisper-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BACKEND: "whisper"
+    image: whisper-service:demo
+    volumes:
+      - .:/models
+    ports:
+      - "9090:8080"
+    command: wasmedge --dir .:. whisper-api-server.wasm -m /models/ggml-medium.bin
+
+  llama-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BACKEND: "llama"
+    image: llama-service:demo
+    volumes:
+      - .:/models
+    ports:
+      - "9091:8080"
+    command: wasmedge --dir .:. --nn-preload default:GGML:AUTO:/models/Llama-3.2-1B-Instruct-Q2_K.gguf --nn-preload embedding:GGML:AUTO:/models/nomic-embed-text-v1.5.f16.gguf llama-api-server.wasm --model-alias default,embedding --model-name llama-3-8b-chat,nomic-embed --prompt-template llama-3-chat,embedding --batch-size 128,8192 --ctx-size 8192,8192

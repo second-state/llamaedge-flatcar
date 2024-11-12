@@ -288,8 +288,9 @@ case "${VM_BOARD}" in
         qemu-system-x86_64 \
             -name "$VM_NAME" \
             -m ${VM_MEMORY} \
-            -netdev user,id=eth0,hostfwd=tcp::"${SSH_PORT}"-:22,hostname="${VM_NAME}" \
+            -netdev user,id=eth0,hostfwd=tcp::"${SSH_PORT}"-:22,hostfwd=tcp::9090-:9090,hostfwd=tcp::9091-:9091,hostname="${VM_NAME}" \
             -device virtio-net-pci,netdev=eth0 \
+            -virtfs local,path=$(pwd),security_model=mapped,mount_tag=llamaedge-flatcar \
             -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-pci,rng=rng0 \
             "$@"
         ;;
@@ -297,8 +298,9 @@ case "${VM_BOARD}" in
         qemu-system-aarch64 \
             -name "$VM_NAME" \
             -m ${VM_MEMORY} \
-            -netdev user,id=eth0,hostfwd=tcp::"${SSH_PORT}"-:22,hostname="${VM_NAME}" \
+            -netdev user,id=eth0,hostfwd=tcp::"${SSH_PORT}"-:22,hostfwd=tcp::9090-:9090,hostfwd=tcp::9091-:9091,hostname="${VM_NAME}" \
             -device virtio-net-device,netdev=eth0 \
+            -virtfs local,path=$(pwd),security_model=mapped,mount_tag=llamaedge-flatcar \
             -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-pci,rng=rng0 \
             "$@"
         ;;
